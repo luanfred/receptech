@@ -82,7 +82,7 @@ Siga os passos abaixo para configurar e executar o projeto localmente:
     python manage.py runserver
     ```
 
-O projeto estará acessível em [[http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+O projeto estará acessível em [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
 
 
 
