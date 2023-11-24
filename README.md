@@ -7,7 +7,6 @@ O Receptech é um sistema web desenvolvido em Python com Django, projetado para 
 O sistema abrange os seguintes aspectos:
 
 - Cadastro de empresas envolvidas no processo.
-- Cadastro de veículos utilizados no transporte.
 - Cadastro de operadores responsáveis pelo processo.
 - Cadastro de silos, locais de armazenagem do líquido.
 - Emissão de relatórios detalhados para rastreabilidade.
