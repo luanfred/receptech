@@ -16,20 +16,17 @@ O sistema abrange os seguintes aspectos:
 
 1. **Cadastro de Empresas:**
    - Permite o registro e gerenciamento de informações sobre as empresas envolvidas no processo.
-
-2. **Cadastro de Veículos:**
-   - Facilita o controle e monitoramento dos veículos utilizados no transporte de matéria-prima.
-
-3. **Cadastro de Operadores:**
+   - 
+2. **Cadastro de Operadores:**
    - Gerencia informações sobre os operadores responsáveis pelo descarregamento e transporte.
 
-4. **Cadastro de Silos:**
+3. **Cadastro de Silos:**
    - Permite o registro de locais de armazenagem do líquido.
 
-5. **Emissão de Relatórios:**
+4. **Emissão de Relatórios:**
    - Gera relatórios detalhados para rastreabilidade do processo.
 
-6. **Envio de Relatórios por E-mail:**
+5. **Envio de Relatórios por E-mail:**
    - Oferece a funcionalidade de enviar automaticamente relatórios por e-mail.
 
 ## Tecnologias Utilizadas
