@@ -1,0 +1,479 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">
+                Descarregamento
+            </h3>
+        </div>
+        <form action="{% url 'cadastrar_descarregamento' %}" method="post" id="form_descarregamento">
+            {% csrf_token %}
+            <div class="card-body">
+                <div class="row">
+
+                    <input type="text" id="descarregamento_id" name="descarregamento_id" value="{{ descarregamento.descarregamento_id }}" hidden>
+
+                    <div class="col-md-12">
+                        <div class="card card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Dados Empresariais</h3>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="row p-2">
+                                    <div class="col-sm-4 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="">Código Empresa </label>
+                                            <div class="input-group">
+                                                <input type="text" id="empresa_empresa_id" name="empresa_empresa_id"
+                                                    class="form-control" placeholder="Informe o código da empresa"
+                                                    value="{{ descarregamento.empresa_id.empresa_id }}">
+                                                <span class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalEmpresas" onclick="listarEmpresas()">
+                                                        <i class="fa fa-search"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="">Nome Empresa</label>
+                                            <input type="text" class="form-control"
+                                                id="empresa_nome" name="empresa_nome"
+                                                readonly
+                                                value="{{ descarregamento.empresa_id.nome|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+                
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="">Numero Nota Fiscal </label>
+                                            <input type="text" class="form-control decimal"
+                                                   id="numero_nota_fiscal" name="numero_nota_fiscal"
+                                                   placeholder="Informe do número da nota fiscal" maxlength="50" 
+                                                   value="{{ descarregamento.nota_fiscal|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+                
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="">Placa </label>
+                                            <input type="text" class="form-control"
+                                                   id="placa" name="placa"
+                                                   placeholder="Informe a placa do veículo" maxlength="50" 
+                                                   value="{{ descarregamento.placa|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+                
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="">Data </label>
+                                            <input type="date" class="form-control"
+                                                id="data" name="data"
+                                               placeholder="Cidade" maxlength="50"
+                                               {% if descarregamento.data %}
+                                                    value="{{ descarregamento.data|date:'Y-m-d' }}"
+                                                {% else %}
+                                                    value="{{ data_hoje|default_if_none:'' }}"
+                                                {% endif %}   
+                                            >
+                                        </div>
+                                    </div>
+                
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="turno_operador">Veículo está limpo?</label>
+                                            <select class="custom-select rounded-0" id="veiculo_limpo" name="veiculo_limpo">
+                                                <option value="" {% if descarregamento.veiculo_limpo == None %}selected{% endif %}>Selecione</option>
+                                                <option value="S" {% if descarregamento.veiculo_limpo == 'S' %}selected{% endif %}>Sim</option>
+                                                <option value="N" {% if descarregamento.veiculo_limpo == 'N' %}selected{% endif %}>Não</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="card card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Coleta</h3>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="row p-2">
+                                    <div class="col-sm-4 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="">Código Operador </label>
+                                            <div class="input-group">
+                                                <input type="text" id="codigo_operador_coleta" name="codigo_operador_coleta" 
+                                                    class="form-control" placeholder="Informe o código do operador"
+                                                    value="{{ descarregamento.operadorcoleta_id.pessoa_id|default_if_none:'' }}">
+                                                <span class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalOperadores" onclick="listarOperadores(1)">
+                                                        <i class="fa fa-search"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="">Nome Operador</label>
+                                            <input type="text" class="form-control"
+                                                id="nome_operador_coleta" name="nome_operador_coleta"
+                                                readonly
+                                                value="{{ descarregamento.operadorcoleta_id.nome|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+                
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="">Horário</label>
+                                            <input type="time" class="form-control"
+                                                   id="horario_coleta" name="horario_coleta"
+                                                   placeholder="Informe o horário da coleta"
+                                                   value="{{ descarregamento.horario_coleta|default_if_none:''|time:'H:i' }}"
+                                            >
+                                        </div>
+                                    </div>
+                
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="">1º Recipiente </label>
+                                            <input type="number" class="form-control"
+                                                   id="primeiro_recipiente" name="primeiro_recipiente"
+                                                   placeholder="Informe o número do 1º recipiente" min="0"
+                                                   value="{{ descarregamento.primeiro_recipiente|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="">2º Recipiente </label>
+                                            <input type="number" class="form-control"
+                                                   id="segundo_recipiente" name="segundo_recipiente"
+                                                   placeholder="Informe o número do 2º recipiente" min="0"
+                                                   value="{{ descarregamento.segundo_recipiente|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="">3º Recipiente </label>
+                                            <input type="number" class="form-control"
+                                                   id="terceiro_recipiente" name="terceiro_recipiente"
+                                                   placeholder="Informe o número do 3º recipiente" min="0"
+                                                   value="{{ descarregamento.terceiro_recipiente|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+                
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="">1º Temperatura </label>
+                                            <input type="number" class="form-control"
+                                                   id="primeira_temperatura" name="primeira_temperatura"
+                                                   placeholder="Informe a temperatura do 1º recipiente" min="0"
+                                                   value="{{ descarregamento.temp_primeiro_recipiente|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="">2º Temperatura </label>
+                                            <input type="number" class="form-control"
+                                                   id="segunda_temperatura" name="segunda_temperatura"
+                                                   placeholder="Informe a temperatura do 2º recipiente" min="0"
+                                                   value="{{ descarregamento.temp_segundo_recipiente|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="">3º Temperatura </label>
+                                            <input type="number" class="form-control"
+                                                   id="terceira_temperatura" name="terceira_temperatura"
+                                                   placeholder="Informe a temperatura do 3º recipiente" min="0"
+                                                   value="{{ descarregamento.temp_terceiro_recipiente|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="card card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Estabilizar</h3>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="row p-2">
+
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label for="">Quantidade de Citrato </label>
+                                            <input type="text" class="form-control decimal numerico_2"
+                                                   id="qtd_citrato" name="qtd_citrato"
+                                                   placeholder="Informe a quantidade de citrato" maxlength="50" 
+                                                   value="{{ descarregamento.qtd_citrato|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label for="">Nº Lote Citrato </label>
+                                            <input type="text" class="form-control decimal"
+                                                   id="numero_citrato" name="numero_citrato"
+                                                   placeholder="Informe do número do citrato" maxlength="50" 
+                                                   value="{{ descarregamento.lote_citrato|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label for="">Quantidade de Fosfato </label>
+                                            <input type="text" class="form-control decimal numerico_2"
+                                                   id="qtd_fosfato" name="qtd_fosfato"
+                                                   placeholder="Informe a quantidade de fosfato" maxlength="50" 
+                                                   value="{{ descarregamento.qtd_fosfato|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label for="">Nº Lote Fosfato </label>
+                                            <input type="text" class="form-control decimal"
+                                                   id="numero_fosfato" name="numero_fosfato"
+                                                   placeholder="Informe do número do fosfato" maxlength="50" 
+                                                   value="{{ descarregamento.lote_fosfato|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="">Código Operador </label>
+                                            <div class="input-group">
+                                                <input type="text" id="codigo_operador_estabilizar" name="codigo_operador_estabilizar" 
+                                                    class="form-control" placeholder="Informe o código do operador"
+                                                    value="{{ descarregamento.operadoestabilizacao_id.pessoa_id|default_if_none:'' }}">
+                                                <span class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalOperadores" onclick="listarOperadores(2)">
+                                                        <i class="fa fa-search"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                
+                                    <div class="col-sm-8">
+                                        <div class="form-group">
+                                            <label for="">Nome Operador</label>
+                                            <input type="text" class="form-control"
+                                                id="nome_operador_estabilizar" name="nome_operador_estabilizar"
+                                                readonly
+                                                value="{{ descarregamento.operadoestabilizacao_id.nome|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="card card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Descarregamento</h3>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="row p-2">
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label for="">Horário de Início </label>
+                                            <input type="time" class="form-control"
+                                                   id="descarregamento_horario_inicio" name="descarregamento_horario_inicio"
+                                                   placeholder="Informe o horário de início do descarregamento"  
+                                                   value="{{ descarregamento.horario_inicio_descarga|default_if_none:''|time:'H:i' }}"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label for="">Quant. Litros na Nota </label>
+                                            <input type="text" class="form-control decimal numerico"
+                                                   id="qtd_litros_nota" name="qtd_litros_nota"
+                                                   placeholder="Informe a quantidade"  
+                                                   value="{{ descarregamento.qtd_litros_nota|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label for="">Horário de Término </label>
+                                            <input type="time" class="form-control"
+                                                   id="descarregamento_horario_termino" name="descarregamento_horario_termino"
+                                                   placeholder="Informe o horário do término do descarregamento"  
+                                                   value="{{ descarregamento.horario_fim_descarga|default_if_none:''|time:'H:i' }}"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label for="">Quant. Litros Cont.</label>
+                                            <input type="text" class="form-control decimal numerico"
+                                                   id="qtd_litros_bomba" name="qtd_litros_bomba"
+                                                   placeholder="Informe a quantidade"
+                                                   value="{{ descarregamento.qtd_litros_bomba|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label for="">Diferença</label>
+                                            <input type="text" class="form-control decimal numerico"
+                                                   id="diferenca" name="diferenca" readonly  
+                                                   value="{{ descarregamento.diferenca|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label for="">Horário Saída Veículo</label>
+                                            <input type="time" class="form-control"
+                                                   id="horario_saida_veiculo" name="horario_saida_veiculo"  
+                                                   value="{{ descarregamento.horario_saida_veiculo|default_if_none:''|time:'H:i' }}"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="silo_id">Silo</label>
+                                            <select class="custom-select rounded-0" id="silo_id" name="silo_id">
+                                                <option value="">Selecione</option>
+                                                {% for silo in silos %}
+                                                    <option value="{{ silo.silo_id }}"
+                                                        {% if descarregamento.silo_id.silo_id == silo.silo_id  %}
+                                                            selected
+                                                        {% endif %}>
+                                                        {{ silo.silo_id }} - {{ silo.quantidade }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="">Código Operador </label>
+                                            <div class="input-group">
+                                                <input type="text" id="codigo_operador_limpeza" name="codigo_operador_limpeza" 
+                                                    class="form-control" placeholder="Informe o código do operador"
+                                                    value="{{ descarregamento.operadorlimpeza_id.pessoa_id|default_if_none:'' }}">
+                                                <span class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalOperadores" onclick="listarOperadores(3)">
+                                                        <i class="fa fa-search"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="">Nome Operador</label>
+                                            <input type="text" class="form-control"
+                                                id="nome_operador_limpeza" name="nome_operador_limpeza"
+                                                readonly
+                                                value="{{ descarregamento.operadorlimpeza_id.nome|default_if_none:'' }}"
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-end">
+                <a href="{% url 'index_descarregamento' %}" class="btn btn-secondary">Voltar</a>
+                <button type="submit" class="btn btn-primary ml-3">Salvar</button>
+            </div>
+        </form>
+    </div>
+
+{% include "partials/_modal_operadores.html" %}
+{% include "partials/_modal_empresa.html" %}
+
+{% endblock  %}
+
+{% block script %}
+
+<script src="{% static 'lib/adminLTE-3.2.0/plugins/jquery-mask/jquery.mask.min.js' %}"></script>
+<script src="{% static 'js/mascaras.js' %}"></script>
+
+<script>
+
+    let page = 1
+    let pageEmpresa = 1
+
+    $('#qtd_litros_nota').on('change', function () {
+        if (this.value === '' && $('#qtd_litros_bomba').val() !== '') {
+            toastr.warning('Informe a quantidade de litros na nota')
+            $('#qtd_litros_nota').focus()
+            $('#diferenca').val('') 
+        } else if (this.value !== '' && $('#qtd_litros_bomba').val() !== '') {
+            let qtdLitrosNota = this.value.replace('.', '')
+            let qtdLitrosCont = $('#qtd_litros_bomba').val().replace('.', '')
+            calculaDiferenca(Number(qtdLitrosNota), Number(qtdLitrosCont))
+        } else {
+            $('#diferenca').val('')
+        }
+    })
+    $('#qtd_litros_bomba').on('change', function () {
+        if ($('#qtd_litros_nota').val() === '') {
+            toastr.warning('Informe a quantidade de litros na nota')
+            $('#qtd_litros_nota').focus()
+        } else if (this.value !== '' && $('#qtd_litros_nota').val() !== '') {
+            let qtdLitrosNota = $('#qtd_litros_nota').val().replace('.', '')
+            let qtdLitrosCont = this.value.replace('.', '')
+            calculaDiferenca(Number(qtdLitrosNota), Number(qtdLitrosCont))
+        } else {
+            $('#diferenca').val('')
+        }
+    })
+
+    function calculaDiferenca (qtdLitrosNota, qtdLitrosCont) {
+        let diferenca = qtdLitrosNota - qtdLitrosCont
+        diferenca = diferenca.toLocaleString('pt-BR');
+        $('#diferenca').val(diferenca)
+    }
+
+</script>
+{% endblock %}

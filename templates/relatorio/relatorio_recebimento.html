@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+    }
+    .container {
+        width: 100%;
+        height: 200px;
+        border: 1px solid black;
+    }
+    .container span {
+        padding-left: 5px;
+        font-size: 13px;
+    }
+    .header {
+        height: 20px;
+        border-bottom: 1px solid black;
+        margin-top: 5px;
+    }
+    .header span {
+        font-weight: bold;
+    }
+    .line {
+        display: -webkit-box;
+        display: flex;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+        height: 20px;
+        margin: 5px;
+    }
+    .line span {
+        font-weight: bold;
+    }
+
+</style>
+<html>
+<head>
+    <title>Relatório de Descarregamento</title>
+</head>
+<body>
+    <h1>Relatório de Descarregamento</h1>
+    {% if descarregamentos|length <= 0 %}
+        <h3>Nenhum registro encontrado</h3>
+    {% else %}  
+    {% for info in descarregamentos %}
+    <div class="container">
+        <div class="header">
+            <span>Empresa:</span> {{ info.empresa_id.nome or '' }}
+        </div>
+        <div class="line">
+            <div>
+                <span>Placa: </span>
+                {{ info.placa or '' or '' }}
+            </div>
+            <div>
+                <span>Nota Fiscal: </span>
+                {{ info.nota_fiscal or '' }}
+            </div>
+            <div>
+                <span>Data: </span>
+                {{ info.data or '' }}
+            </div>
+            <div>
+                <span>Veículo Limpo: </span>
+                {{ info.veiculo_limpo or '' }}
+            </div>
+            <div>
+                <span>Situação: </span>
+                {{ info.situacao or '' }}
+            </div>
+        </div>
+        <div class="line">
+            <div>
+                <span>Operador Coleta: </span>
+                {{ info.operadorcoleta_id.nome or '' }}
+            </div>
+            <div>
+                <span>Horário Coleta: </span>
+                {{ info.horario_coleta or '' }}
+            </div>
+            <div>
+                <span>1º Recipiente: </span>
+                {{ info.primeiro_recipiente or '' }}
+            </div>
+            <div>
+                <span>2º Recipiente: </span>
+                {{ info.segundo_recipiente or '' }}
+            </div>
+            <div>
+                <span>3º Recipiente: </span>
+                {{ info.terceiro_recipiente or '' }}
+            </div>
+        </div>
+        <div class="line">
+            <div>
+                <span>1º Temperatura: </span>
+                {{ info.temp_primeiro_recipiente or '' }} ºC
+            </div>
+            <div>
+                <span>2º Temperatura: </span>
+                {{ info.temp_segundo_recipiente or '' }} ºC
+            </div>
+            <div>
+                <span>3º Temperatura: </span>
+                {{ info.temp_terceiro_recipiente or '' }} ºC
+            </div>
+        </div>
+        <div class="line">
+            <div>
+                <span>Operador Estabilizar: </span>
+                {{ info.operadoestabilizacao_id.nome or '' }}
+            </div>
+            <div>
+                <span>Qtd. Citrato</span>
+                {{ info.qtd_citrato or '' }}
+            </div>
+            <div>
+                <span>Qtd. Citrato</span>
+                {{ info.qtd_fosfato or '' }}
+            </div>
+        </div>
+        <div class="line">
+            <div>
+                <span>Nº Lote Citrato</span>
+                {{ info.lote_citrato or '' }}
+            </div>
+            <div>
+                <span>Nº Lote Fosfato</span>
+                {{ info.lote_fosfato or '' }}
+            </div>
+            <div>
+                <span>Silo: </span>
+                {{ info.silo_id.silo_id or '' }} - {{ info.silo_id.quantidade or '' }}
+            </div>
+        </div>
+        <div class="line">
+            <div>
+                <span>Operador Descarregamento: </span>
+                {{ info.operadorlimpeza_id.nome or '' }}
+            </div>
+            <div>
+                <span>Horário Início: </span>
+                {{ info.horario_inicio_descarga or '' }}
+            </div>
+            <div>
+                <span>Horário Fim: </span>
+                {{ info.horario_fim_descarga or '' }}
+            </div>
+            <div>
+                <span>Horário Saída Veículo: </span>
+                {{ info.horario_saida_veiculo or '' }}
+            </div>
+        </div>
+        <div class="line">
+            <div>
+                <span>Quant. Litros na Nota: </span>
+                {{ info.qtd_litros_nota or '' }}
+            </div>
+            <div>
+                <span>Quant. Litros Contabilizado: </span>
+                {{ info.qtd_litros_bomba or '' }}
+            </div>
+            <div>
+                <span>Diferença: </span>
+                {{ info.diferenca or '' }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</body>
+</html>

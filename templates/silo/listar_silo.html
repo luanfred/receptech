@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">
+                Silos
+            </h3>
+        </div>
+        <div class="card-body">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'cadastrar_silo' %}" class="btn btn-success">Cadastrar</a>
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control"
+                                       placeholder="Pesquisar..."
+                                        id="filtro" name="filtro"
+                                        value="{{ filtro|default_if_none:'' }}">
+                                <div class="input-group-append">
+                                    <button class="btn btn-default" type="button" id="button_pesquisa">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th>Ações</th>
+                            <th>Código</th>
+                            <th>Quantidade</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% if registros|length <= 0 %}
+                            <tr>
+                                <td colspan="6" class="text-center">Nenhum registro encontrado</td>
+                            </tr>
+                        {% else %}
+                            {% for silo in registros %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'editar_silo' silo.silo_id %}"
+                                           class="btn btn-primary btn-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button class="btn btn-danger btn-sm ml-2"
+                                                onclick="excluirRegistro({{ silo.silo_id }}, 'silo', 'silo/excluir')"
+                                        >
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                    <td>{{ silo.silo_id }}</td>
+                                    <td>{{ silo.quantidade }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                {% include 'partials/paginacao.html' %}
+            </div>
+        </div>
+    </div>
+
+    {% include 'partials/_modal_excluir.html' %}
+{% endblock %}
+
+{% block script %}
+    <script>
+        $('#button_pesquisa').click(function (e) {
+            let filtro = $('#filtro').val();
+            window.location.href = "{% url 'index_silo' %}?filtro=" + filtro;
+        });
+    </script>
+{% endblock %}f

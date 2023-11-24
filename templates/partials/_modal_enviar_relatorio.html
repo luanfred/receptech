@@ -1,0 +1,50 @@
+{% load static %}
+
+<div class="modal fade" id="modalEnviarRelatorioEmail" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="titulo">Enviar Relatório para E-mail</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label for="">E-mail </label>
+                        <input type="text" class="form-control"
+                            id="email" name="email"
+                            placeholder="Informe o email" maxlength="50" 
+                            value="">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btn_enviar_email">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src=" {% static 'lib/AdminLTE-3.2.0/plugins/jquery/jquery.min.js' %}"></script>
+
+<script>
+
+    $('#btn_enviar_email').on('click', function () {
+        console.log('enviar email');
+        let email = $('#email').val();
+
+        if ( email == '' ) {
+            toastr.error('Informe o e-mail');
+            return false;
+        }
+
+        $("#email_form").val(email);
+
+        $("#form_relatorio").submit();
+    });
+
+
+</script>

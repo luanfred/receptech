@@ -1,0 +1,155 @@
+{% load static %}
+
+<div class="modal fade bd-example-modal-lg" id="modalEmpresas" tabindex="-1" role="dialog" aria-labelledby="modalEmpresas" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title h4" id="myLargeModalLabel">Buscar Empresas</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Razão Social</th>
+                                <th>CNPJ/CPF</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela_empresas">
+                        </tbody>
+                    </table>
+                    <div class="card-footer clearfix">
+                        <div class="row">
+                    
+                            <div class="col-sm-12 col-md-6">
+                                <div class="dataTables_info" id="" role="status" aria-live="polite">
+                                    Exibindo <span id="empresa_registro_inicial"></span> até <span id="empresa_registro_final"></span> de <span id="empresa_total_registros"></span>
+                                    registros
+                                </div>
+                            </div>
+                    
+                            <div class="col-sm-12 col-md-6">
+                                <div class="dataTables_paginate paging_simple_numbers" id="" style="float: right">
+                                    <ul class="pagination" id="empresa_pagination">
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src=" {% static 'lib/AdminLTE-3.2.0/plugins/jquery/jquery.min.js' %}"></script>
+<script src=" {% static 'lib/AdminLTE-3.2.0/plugins/jquery-mask/jquery.mask.min.js' %}"></script>
+
+<script>
+
+    function listarEmpresas () {
+        let dominio = window.location.origin
+        $.ajax({
+            url: dominio + '/empresa/listar/',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                pageEmpresa: pageEmpresa
+            },
+            success: function (data) {
+                // limpa a tabela e a paginação
+                $('#tabela_empresas').html('')
+                $('#empresa_pagination').html('')
+
+                // preenche a tabela
+                let data_empresa = data.registros
+                let html = ''
+                let turno = ''
+                for (let i = 0; i < data_empresa.length; i++) {
+                    html += '<tr>'
+                    html += '<td id="empresa_id">' + data_empresa[i].empresa_id + '</td>'
+                    html += '<td id="nome">' + data_empresa[i].nome + '</td>'
+                    html += '<td id="cpfcnpj">' + data_empresa[i].cpfcnpj + '</td>'
+                    html += '</tr>'
+                }
+                $('#tabela_empresas').html(html)
+
+                // preenche a paginação
+                $('#empresa_registro_inicial').html(data.registro_inicial)
+                $('#empresa_registro_final').html(data.registro_final)
+                $('#empresa_total_registros').html(data.total_registros)
+
+                if (data.tem_pagina_anterior) {
+                    $('#empresa_pagination').append(
+                        `<li class="paginate_button pageEmpresa-item">
+                            <a class="pageEmpresa-link" onclick="anteriorPaginaEmpresa()">
+                                <i class="fas fa-arrow-left"></i>
+                            </a>`
+                    )
+                } 
+                if (data.tem_proxima_pagina) {
+                    $('#empresa_pagination').append(
+                        `<li class="paginate_button pageEmpresa-item">
+                            <a class="pageEmpresa-link" onclick="proximaPaginaEmpresa()">
+                                <i class="fas fa-arrow-right"></i>
+                            </a>`
+                    )
+                }
+
+                // adiciona evento de click na tabela
+                $('#tabela_empresas tr').click(function () {
+                    let empresa_id = $(this).find('#empresa_id').html()
+                    let nome = $(this).find('#nome').html()
+                    $('#empresa_empresa_id').val(empresa_id)
+                    $('#empresa_nome').val(nome)
+
+                    $('#modalEmpresas').modal('hide')
+                })
+
+            }
+        })
+    }
+
+    function proximaPaginaEmpresa () {
+        pageEmpresa = pageEmpresa + 1
+        listarEmpresas()
+    }
+
+    function anteriorPaginaEmpresa () {
+        pageEmpresa = pageEmpresa - 1
+        listarEmpresas()
+    }
+
+    function buscarEmpresa (id) {
+        let dominio = window.location.origin
+
+        $.ajax({
+            url: dominio + '/empresa/buscar/' + id,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                if (data.status == 'ok') {
+                    $('#empresa_nome').val(data.nome)
+                } else {
+                    $('#empresa_empresa_id').val('')
+                    $('#empresa_nome').val('')
+                    toastr.error(data.mensagem)
+                }
+            },
+        })
+    }
+
+    $('#empresa_empresa_id').on('change', function () {
+        if ($(this).val() == '') {
+            $('#empresa_nome').val('')
+        } else {
+            buscarEmpresa($(this).val())
+        }
+    })
+    
+</script>

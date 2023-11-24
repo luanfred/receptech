@@ -1,0 +1,67 @@
+{% load static %}
+
+<div class="modal fade" id="modal_excluir" aria-modal="true" role="dialog">
+
+    <input type="hidden" id="id_excluir" value="">
+    <input type="hidden" id="url_excluir" value="">
+
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="titulo">Confirmação de Exclusão</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="mensagem"></p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btn_excluir">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src=" {% static 'lib/AdminLTE-3.2.0/plugins/jquery/jquery.min.js' %}"></script>
+
+<script>
+
+    function excluirRegistro (id, item, url) {
+        $('#modal_excluir').modal('show');
+        item = item.toLowerCase();
+        item = item.charAt(0).toUpperCase() + item.slice(1);
+        let mensagem = `Deseja realmente excluir esse(a) ${item}?`
+        $('#mensagem').html(mensagem);
+        $('#id_excluir').val(id);
+        $('#url_excluir').val(url);
+    }
+
+    $('#btn_excluir').on('click', function () {
+        let host_url = window.location.origin;
+        let url = $('#url_excluir').val();
+        let id = $('#id_excluir').val();
+        url = `${host_url}/${url}/${id}/`;
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function (data) {
+                console.log(data);
+                if (data['status'] == 'ok') {
+                    $('#modal_excluir').modal('hide');
+                    toastr.success(data['msg']);
+                    location.reload();
+                } else {
+                    $('#modal_excluir').modal('hide');
+                    toastr.error(data['msg']);
+                }
+            }
+        })
+    });
+
+</script>

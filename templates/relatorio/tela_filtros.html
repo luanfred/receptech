@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">
+                Relatório de Recebimentos
+            </h3>
+        </div>
+        <form action="{% url 'gerar_relatorio_recebimentos' %}" method="post" id="form_relatorio">
+            {% csrf_token %}
+            <div class="card-body">
+                <div class="row p-2">
+
+                    <input type="text" id="email_form" name="email_form" hidden>
+
+                    <div class="col-sm-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="">Código Operador - Coleta </label>
+                            <div class="input-group">
+                                <input type="text" id="codigo_operador_coleta" name="codigo_operador_coleta" 
+                                    class="form-control" placeholder="Informe o código do operador"
+                                    value="">
+                                <span class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalOperadores" onclick="listarOperadores(1)">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="">Nome Operador - Coleta</label>
+                            <input type="text" class="form-control"
+                                id="nome_operador_coleta" name="nome_operador_coleta"
+                                readonly
+                                value=""
+                            >
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="">Código Operador - Estabilizar </label>
+                            <div class="input-group">
+                                <input type="text" id="codigo_operador_estabilizar" name="codigo_operador_estabilizar" 
+                                    class="form-control" placeholder="Informe o código do operador"
+                                    value="">
+                                <span class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalOperadores" onclick="listarOperadores(2)">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="">Nome Operador - Estabilizar</label>
+                            <input type="text" class="form-control"
+                                id="nome_operador_estabilizar" name="nome_operador_estabilizar"
+                                readonly
+                                value=""
+                            >
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="">Código Operador - Descarregamento </label>
+                            <div class="input-group">
+                                <input type="text" id="codigo_operador_limpeza" name="codigo_operador_limpeza" 
+                                    class="form-control" placeholder="Informe o código do operador"
+                                    value="">
+                                <span class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalOperadores" onclick="listarOperadores(3)">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="">Nome Operador - Descarregamento</label>
+                            <input type="text" class="form-control"
+                                id="nome_operador_limpeza" name="nome_operador_limpeza"
+                                readonly
+                                value=""
+                            >
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="">Código Empresa </label>
+                            <div class="input-group">
+                                <input type="text" id="empresa_empresa_id" name="empresa_empresa_id" class="form-control" placeholder="Informe o código da empresa" value="">
+                                <span class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalEmpresas" onclick="listarEmpresas()">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="">Nome Empresa</label>
+                            <input type="text" class="form-control" id="empresa_nome" name="empresa_nome" readonly="" value="">
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="">Nº Lote Citrato </label>
+                            <input type="text" class="form-control decimal"
+                                   id="numero_citrato" name="numero_citrato"
+                                   placeholder="Informe do número do citrato" maxlength="50" 
+                                   value=""
+                            >
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="">Nº Lote Fosfato </label>
+                            <input type="text" class="form-control decimal"
+                                   id="numero_fosfato" name="numero_fosfato"
+                                   placeholder="Informe do número do fosfato" maxlength="50" 
+                                   value=""
+                            >
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="">Placa </label>
+                            <input type="text" class="form-control"
+                                   id="placa" name="placa"
+                                   placeholder="Informe a placa do veículo" maxlength="50" 
+                                   value=""
+                            >
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="">Nota Fiscal</label>
+                            <input type="text" class="form-control"
+                                   id="nota_fiscal" name="nota_fiscal"
+                                   placeholder="Informe a Nota Fiscal" maxlength="50" 
+                                   value=""
+                            >
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="silo_id">Silo</label>
+                            <select class="custom-select rounded-0" id="silo_id" name="silo_id">
+                                <option value="">Selecione</option>
+                                {% for silo in silos %}
+                                    <option value="{{ silo.silo_id }}">
+                                        {{ silo.silo_id }} - {{ silo.quantidade }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="">Data Inicio</label>
+                            <input type="date" class="form-control"
+                                id="data_inicio" name="data_inicio"
+                               placeholder="Data"
+                            >
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="">Data Fim</label>
+                            <input type="date" class="form-control"
+                                id="data_final" name="data_final"
+                               placeholder="Data"
+                            >
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="silo_id">Ordenar</label>
+                            <select class="custom-select rounded-0" id="ordenar" name="ordenar">
+                                <option value="data">Data</option>
+                                <option value="placa">Placa</option>
+                                <option value="lote_citrato">Nº Lote Citrato</option>
+                                <option value="lote_fosfato">Nº Lote Fosfato</option>
+                                <option value="empresa_id__nome">Empresa</option>
+                                <option value="operadorcoleta_id__nome">Operador - Coleta</option>
+                                <option value="operadoestabilizacao_id__nome">Operador - Estabilizar</option>
+                                <option value="operadorlimpeza_id__nome">Operador - Descarregamento</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+
+                </div>
+            </div>
+            <div class="card-footer">
+                <div id="actions" class="d-flex justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="btn-group w-100">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-plus"></i>
+                                <span>Gerar Relatório</span>
+                            </button>
+                            <button type="button" class="btn btn-primary"
+                                data-toggle="modal" data-target="#modalEnviarRelatorioEmail">
+                                <i class="fas fa-upload"></i>
+                                <span>Enviar Relatório</span>
+                            </button>
+                            <a href="{% url "index_descarregamento" %}" class="btn btn-danger">
+                                <i class="fas fa-times-circle"></i>
+                                <span>Voltar a Página Inicial</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% include "partials/_modal_operadores.html" %}
+{% include "partials/_modal_empresa.html" %}
+{% include "partials/_modal_enviar_relatorio.html" %}
+
+{% endblock  %}
+
+{% block script %}
+
+<script src="{% static 'js/mascaras.js' %}"></script>
+
+<script>
+    let page = 1
+    let pageEmpresa = 1
+
+</script>
+{% endblock %}

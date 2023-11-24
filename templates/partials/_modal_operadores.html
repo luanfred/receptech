@@ -1,0 +1,193 @@
+{% load static %}
+
+<div class="modal fade bd-example-modal-lg" id="modalOperadores" tabindex="-1" role="dialog" aria-labelledby="modalOperadores" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title h4" id="myLargeModalLabel">Buscar Operadores</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nome</th>
+                                <th>Turno</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela_operadores">
+                        </tbody>
+                    </table>
+                    <div class="card-footer clearfix">
+                        <div class="row">
+                    
+                            <div class="col-sm-12 col-md-6">
+                                <div class="dataTables_info" id="" role="status" aria-live="polite">
+                                    Exibindo <span id="registro_inicial"></span> até <span id="registro_final"></span> de <span id="total_registros"></span>
+                                    registros
+                                </div>
+                            </div>
+                    
+                            <div class="col-sm-12 col-md-6">
+                                <div class="dataTables_paginate paging_simple_numbers" id="" style="float: right">
+                                    <ul class="pagination" id="pagination">
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src=" {% static 'lib/AdminLTE-3.2.0/plugins/jquery/jquery.min.js' %}"></script>
+<script src=" {% static 'lib/AdminLTE-3.2.0/plugins/jquery-mask/jquery.mask.min.js' %}"></script>
+
+<script>
+
+    function listarOperadores (tipo=null) {
+        let dominio = window.location.origin
+        $.ajax({
+            url: dominio + '/operador/listar/',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                page: page
+            },
+            success: function (data) {
+                // limpa a tabela e a paginação
+                $('#tabela_operadores').html('')
+                $('#pagination').html('')
+
+                // preenche a tabela
+                let data_operador = data.registros
+                let html = ''
+                let turno = ''
+                for (let i = 0; i < data_operador.length; i++) {
+                    if (data_operador[i].turno == 1) {
+                        turno = 'Madrugada'
+                    } else if (data_operador[i].turno == 2) {
+                        turno = 'Manhã'
+                    } else if (data_operador[i].turno == 3) {
+                        turno = 'Tarde'
+                    }
+                    html += '<tr>'
+                    html += '<td id="pessoa_id">' + data_operador[i].pessoa_id + '</td>'
+                    html += '<td id="nome">' + data_operador[i].nome + '</td>'
+                    html += '<td id="turno">' + turno + '</td>'
+                    html += '</tr>'
+                }
+                $('#tabela_operadores').html(html)
+
+                // preenche a paginação
+                $('#registro_inicial').html(data.registro_inicial)
+                $('#registro_final').html(data.registro_final)
+                $('#total_registros').html(data.total_registros)
+
+                if (data.tem_pagina_anterior) {
+                    $('#pagination').append(
+                        `<li class="paginate_button page-item">
+                            <a class="page-link" onclick="anteriorPagina()">
+                                <i class="fas fa-arrow-left"></i>
+                            </a>`
+                    )
+                } 
+                if (data.tem_proxima_pagina) {
+                    $('#pagination').append(
+                        `<li class="paginate_button page-item">
+                            <a class="page-link" onclick="proximaPagina()">
+                                <i class="fas fa-arrow-right"></i>
+                            </a>`
+                    )
+                }
+
+                // adiciona evento de click na tabela
+                $('#tabela_operadores tr').click(function () {
+                    let pessoa_id = $(this).find('#pessoa_id').html()
+                    let nome = $(this).find('#nome').html()
+                    console.log('tipo = ' + tipo)
+                    if (tipo === 1) {
+                        $('#codigo_operador_coleta').val(pessoa_id)
+                        $('#nome_operador_coleta').val(nome)
+                    } else if (tipo === 2) {
+                        $('#codigo_operador_estabilizar').val(pessoa_id)
+                        $('#nome_operador_estabilizar').val(nome)
+                    } else if (tipo === 3) {
+                        $('#codigo_operador_limpeza').val(pessoa_id)
+                        $('#nome_operador_limpeza').val(nome)
+                    }
+                    $('#modalOperadores').modal('hide')
+                })
+
+            }
+        })
+    }
+
+    function proximaPagina () {
+        page = page + 1
+        listarOperadores()
+    }
+
+    function anteriorPagina () {
+        page = page - 1
+        listarOperadores()
+    }
+
+    function buscarOperador (id, tipo=null) {
+        let dominio = window.location.origin
+        let descricaoTipo = ''
+        if (tipo === 1) {
+            descricaoTipo = 'coleta'
+        } else if (tipo === 2) {
+            descricaoTipo = 'estabilizar'
+        } else if (tipo === 3) {
+            descricaoTipo = 'limpeza'
+        }
+        $.ajax({
+            url: dominio + '/operador/buscar/' + id,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                if (data.status == 'ok') {
+                    $(`#nome_operador_${descricaoTipo}`).val(data.nome)
+                } else {
+                    $(`#codigo_operador_${descricaoTipo}`).val('')
+                    $(`#nome_operador_${descricaoTipo}`).val('')
+                    toastr.error(data.mensagem)
+                }
+            },
+        })
+    }
+
+    $('#codigo_operador_coleta').on('change', function () {
+        if ($(this).val() == '') {
+            $('#nome_operador_coleta').val('')
+        } else {
+            buscarOperador($(this).val(), 1)
+        }
+    })
+
+    $('#codigo_operador_estabilizar').on('change', function () {
+        if ($(this).val() == '') {
+            $('#nome_operador_estabilizar').val('')
+        } else {
+            buscarOperador($(this).val(), 2)
+        }
+    })
+
+    $('#codigo_operador_limpeza').on('change', function () {
+        if ($(this).val() == '') {
+            $('#nome_operador_limpeza').val('')
+        } else {
+            buscarOperador($(this).val(), 3)
+        }
+    })
+    
+</script>

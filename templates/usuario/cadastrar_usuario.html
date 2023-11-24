@@ -1,0 +1,154 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receptech</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="{% static 'lib/AdminLTE-3.2.0/plugins/fontawesome-free/css/all.min.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href=" {% static 'lib/AdminLTE-3.2.0/css/adminlte.min.css' %} ">
+
+    <!-- toastr -->
+    <link rel="stylesheet" href=" {% static 'lib/AdminLTE-3.2.0/plugins/toastr/toastr.css' %} ">
+
+    <style>
+
+    </style>
+</head>
+<body class="register-page" cz-shortcut-listen="true" style="min-height: 570.781px;">
+<div class="register-box card card-info">
+    <div class="card-header text-center">
+        <h3><b>Receptech</b></h3>
+    </div>
+    <div class="card">
+        <div class="card-body register-card-body">
+            <p class="login-box-msg">Criar um novo usuário</p>
+            <form action="{% url 'cadastrar_usuario' %}" method="post">
+                {% csrf_token %}
+
+                <!-- Esse código abaixo é usado para apresentar mensagens no template -->
+	            {% include 'partials/messages.html' %}
+
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Nome Completo" id="nome" name="nome">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-user"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control cpfcnpj" placeholder="CPF\CNPJ" id="cpfcnpj" name="cpfcnpj">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-address-card"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control telefone" placeholder="Telefone" id="telefone" name="telefone">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="email" class="form-control" placeholder="Email" id="email" name="email">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-envelope"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="password" class="form-control" placeholder="Senha" id="senha" name="senha">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-lock"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="password" class="form-control" placeholder="Repita a Senha" id="confirmacao_senha" name="confirmacao_senha">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-lock"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <div class="icheck-primary">
+                            <a href="{% url 'login' %}" class="text-center">Já tenho uma conta</a>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <button type="submit" id="btn_entrar" class="btn btn-primary btn-block">Cadastrar</button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
+
+<!-- REQUIRED SCRIPTS -->
+
+<!-- jQuery -->
+<script src=" {% static 'lib/AdminLTE-3.2.0/plugins/jquery/jquery.min.js' %}"></script>
+<script src=" {% static 'lib/AdminLTE-3.2.0/plugins/jquery-mask/jquery.mask.min.js' %}"></script>
+
+<!-- Bootstrap 4 -->
+<script src=" {% static 'lib/AdminLTE-3.2.0/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src=" {% static 'lib/AdminLTE-3.2.0/js/adminlte.min.js' %}"></script>
+
+<!-- toastr -->
+<script src=" {% static 'lib/AdminLTE-3.2.0/plugins/toastr/toastr.min.js' %}"></script>
+
+<script src="{% static 'js/mascaras.js' %}"></script>
+
+<script>
+
+    $('#btn_entrar').on('click', function (e) {
+        if ( $('#nome').val() == '' || $('#nome').val() == null ) {
+            e.preventDefault()
+            toastr.error("Informe o nome completo")
+        }
+        if ( $('#cpfcnpj').val() == '' || $('#cpfcnpj').val() == null ) {
+            e.preventDefault()
+            toastr.error("Informe o CPF ou CNPJ")
+        }
+        if ( $('#telefone').val() == '' || $('#telefone').val() == null ) {
+            e.preventDefault()
+            toastr.error("Informe o telefone")
+        }
+        if ( $('#email').val() == '' || $('#email').val() == null ) {
+            e.preventDefault()
+            toastr.error("O email é obrigatório")
+        }if ( $('#senha').val() == '' || $('#senha').val() == null ) {
+            e.preventDefault()
+            toastr.error("A senha é obrigatório")
+        }
+        if ( $('#confirmacao_senha').val() == '' || $('#confirmacao_senha').val() == null ) {
+            e.preventDefault()
+            toastr.error("A confirmação da senha é obrigatório")
+        }
+    })
+
+</script>
+
+

@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">
+                Empresas
+            </h3>
+        </div>
+        <form action="{% url 'cadastrar_empresa' %}" method="post" id="form_empresa">
+            {% csrf_token %}
+            <div class="card-body">
+                <div class="row p-2">
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="codigo_empresa">Código</label>
+                            <input type="text" class="form-control"
+                                   id="codigo_empresa" name="codigo_empresa"
+                                   placeholder="Código" readonly
+                                   value="{{ empresa.empresa_id|default_if_none:'' }}"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="nome_empresa">Razão Social<span style="color: red;">*</span></label>
+                            <input type="text" class="form-control" id="razao_social"
+                                   name="razao_social" placeholder="Razão Social" maxlength="100"
+                                   value="{{ empresa.nome|default_if_none:'' }}"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">CNPJ/CPF <span style="color: red;">*</span></label>
+                            <input type="text" class="form-control cpfcnpj"
+                                   id="cpfcnpj" name="cpfcnpj"
+                                   placeholder="CNPJ/CPF" maxlength="20"
+                                   value="{{ empresa.cpfcnpj|default_if_none:'' }}"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Telefone <span style="color: red;">*</span></label>
+                            <input type="text" class="form-control telefone"
+                                   id="telefone" name="telefone"
+                                   placeholder="Telefone" maxlength="20"
+                                   value="{{ empresa.telefone|default_if_none:'' }}"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">CEP <span style="color: red;">*</span></label>
+                            <input type="text" class="form-control cep"
+                                   id="cep" name="cep"
+                                   placeholder="CEP" maxlength="20"
+                                   value="{{ empresa.cep|default_if_none:'' }}"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Endereço <span style="color: red;">*</span></label>
+                            <input type="text" class="form-control"
+                                   id="endereco" name="endereco"
+                                   placeholder="Endereço" maxlength="50"
+                                   value="{{ empresa.endereco|default_if_none:'' }}"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Número <span style="color: red;">*</span></label>
+                            <input type="text" class="form-control"
+                                   id="numero" name="numero"
+                                   placeholder="Número" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                                   value="{{ empresa.numero|default_if_none:'' }}"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Bairro <span style="color: red;">*</span></label>
+                            <input type="text" class="form-control"
+                                   id="bairro" name="bairro"
+                                   placeholder="Bairro" maxlength="50"
+                                   value="{{ empresa.bairro|default_if_none:'' }}"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Cidade <span style="color: red;">*</span></label>
+                            <input type="text" class="form-control"
+                                   id="cidade" name="cidade"
+                                   placeholder="Cidade" maxlength="50"
+                                   value="{{ empresa.cidade|default_if_none:'' }}"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">UF <span style="color: red;">*</span></label>
+                            <input type="text" class="form-control"
+                                   id="uf" name="uf"
+                                   placeholder="UF" maxlength="2"
+                                   value="{{ empresa.uf|default_if_none:'' }}"
+                            >
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-end">
+                <a href="{% url 'index_empresa' %}" class="btn btn-secondary">Voltar</a>
+                <button type="submit" class="btn btn-primary ml-3">Salvar</button>
+            </div>
+        </form>
+    </div>
+{% endblock  %}
+
+{% block script %}
+
+<script src="{% static 'js/mascaras.js' %}"></script>
+
+<script>
+
+    $('#form_empresa').on('submit', function (e) {
+        let razaoSocial = $('#razao_social').val().trim();
+        let cnpj = $('#cpfcnpj').val().trim();
+        let telefone = $('#telefone').val().trim();
+        let cep = $('#cep').val().trim();
+        let endereco = $('#endereco').val().trim();
+        let numero = $('#numero').val().trim();
+        let bairro = $('#bairro').val().trim();
+        let cidade = $('#cidade').val().trim();
+        let uf = $('#uf').val().trim();
+
+        if (razaoSocial === '') {
+            toastr.info('Razão Social é obrigatório');
+            e.preventDefault();
+            return false;
+        } else if (cnpj === '') {
+            toastr.info('CNPJ/CPF é obrigatório');
+            e.preventDefault();
+            return false;
+        } else if (telefone === '') {
+            toastr.info('Telefone é obrigatório');
+            e.preventDefault();
+            return false;
+        } else if (cep === '') {
+            toastr.info('CEP é obrigatório');
+            e.preventDefault();
+            return false;
+        } else if (endereco === '') {
+            toastr.info('Endereço é obrigatório');
+            e.preventDefault();
+            return false;
+        } else if (numero === '') {
+            toastr.info('Número é obrigatório');
+            e.preventDefault();
+            return false;
+        } else if (bairro === '') {
+            toastr.info('Bairro é obrigatório');
+            e.preventDefault();
+            return false;
+        } else if (cidade === '') {
+            toastr.info('Cidade é obrigatório');
+            e.preventDefault();
+            return false;
+        } else if (uf === '') {
+            toastr.info('UF é obrigatório');
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    $('#cep').on('change', function () {
+        let cep = $(this).val();
+
+        if (cep === '') {
+            $('#endereco').val('');
+            $('#bairro').val('');
+            $('#cidade').val('');
+            $('#uf').val('');
+        } else {
+            $.ajax({
+                url: 'https://brasilapi.com.br/api/cep/v2/' + cep,
+                type: 'GET',
+                success : function (data) {
+                    $('#endereco').val(data.street);
+                    $('#bairro').val(data.neighborhood);
+                    $('#cidade').val(data.city);
+                    $('#uf').val(data.state);
+                },
+                error : function (data) {
+                    toastr.error('CEP não encontrado');
+                }
+            });
+        }
+    });
+
+</script>
+{% endblock %}
